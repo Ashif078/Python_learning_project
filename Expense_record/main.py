@@ -1,33 +1,53 @@
-from database import(
+from database import (
     create_table,
-    add_expense
+    add_expense,
+    view_expense,
+    delete_expense
 )
 
 def main():
+
     create_table()
 
     while True:
-        print("\n------- Expense Tracker --------")
-        print("\n1.Add Expense \n2.View Expenses \n3.Delete Expense \n4.Exit")
-        
-        choice = int(input("Choose from the menu (1-4): "))
+        print("\n-------- Expense Tracker -------")
+        print("1️⃣. Add Expenses \n2️⃣. View Expense Record \n3️⃣. Delete Expense \n4️⃣. Exit")
+
+        choice = int(input("Choose from menu (1-4):  "))
 
         if choice == 1:
 
-            amount = float(input("Enter the amount of Expense: "))
-            category = input("Enter the category of expense: ")
+            amount = float(input("Enter the amount of expense : ")) 
+            category = input("Enter Expense category: ")
             date = input("Enter the date of expense (YYYY-MM-DD): ")
-            note = input("Enter the reason of exoense: ")
-
+            note = input("Enter the reason of expense: ")
             add_expense(amount, category, date, note)
-            print("Record update successfully!")
+            print("\nRecord Saved Successfully✅")
 
-        elif choice == 4:
-            print("Done Updation")
+        elif choice == 2:
+
+            expenses = view_expense()
+            print("\n------------ All Expenses ------------\n")
+            for ex in expenses:
+                print(f"{ex[0]}. {ex[1]} | {ex[2]} | {ex[3]} | {ex[4]}")
+        
+        elif choice == 3:
+
+            expenses = view_expense()
+            print("\n------------ All Expenses ------------\n")
+            for ex in expenses:
+                print(f"{ex[0]}. {ex[1]} | {ex[2]} | {ex[3]} | {ex[4]}")
+
+            expense_id = int(input("\nEnter the expense 'id' to delete : "))
+
+            delete_expense(expense_id)
+            print("\nOne Expense Deleted Successfully✅")
+
+        elif choice ==  4:
+            print("Done with Updation!")
             break
         else:
-            print("Choose from menu only")
+            print("Enter the choice in range!")
 
 if __name__ == "__main__":
     main()
-
