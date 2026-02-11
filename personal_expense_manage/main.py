@@ -12,7 +12,9 @@ from reports import get_remaining_budget
 from analytics import (
     get_monthly_total,
     get_category_summary,
-    compare_month
+    compare_month,
+    get_last_n_month_totals,
+    analyze_trend
     )
 
 
@@ -29,9 +31,10 @@ def main():
 3️⃣. View Remaining Budget
 4️⃣. View Monthly Expense
 5️⃣. Compare Monthly Spendings
-6️⃣. Exit
+6️⃣. See Trends Over N Months 
+7️⃣. Exit
 """)
-        choice = input("Choose action from menu (1-6) : ")
+        choice = input("Choose action from menu (1-7) : ")
 
         if choice == "1":
 
@@ -102,7 +105,23 @@ def main():
             else:
                 print(f"Good Job! Spending reduced by : {prev_total -  current_total}")
 
-        elif choice == "6" :
+        elif choice == "6":
+            month = input("Enter The month (YYYY-MM) : ")
+            n = int(input("Number of months for trends : "))
+
+            month_totals = get_last_n_month_totals(month, n)
+            analysis = analyze_trend(month_totals)
+
+            if analysis["trend"] == "Insufficient_Data":
+                print("Not enough data to analyze trend.")
+            else:
+                print(f"Current : {analysis["current_total"]}")
+                print(f"Previous : {analysis["previous_total"]}")
+                print(f"Change : {analysis["change"]}")
+                print(f"Trend : {analysis["trend"]}")
+
+
+        elif choice == "7" :
             print("Goodbye...")
             break
 
