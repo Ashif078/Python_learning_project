@@ -36,3 +36,15 @@ def create_table():
     conn.comit()
     conn.close()
 
+def add_client(name,phone,email):
+    
+    conn= get_connect()
+    cursor= conn.cursor()
+
+    cursor.excute("""
+        INSERT INTO clients(nmae, phone_no, email, status) VALUES (?,?,?,?)
+
+
+"""),(name,phone,email,"lead")
+    conn.comit()
+    conn.close()
