@@ -1,6 +1,8 @@
 import sqlite3
 from database import(
-    add_client 
+    add_client,
+    get_client_by_id, 
+    interaction
 
 )
 def create_client(name,phone,email):
@@ -16,5 +18,42 @@ def create_client(name,phone,email):
         add_client(name,phone,email)
     except sqlite3.IntegrityError:
         raise ValueError("client already exists")
+    
+def add_interaction(client_id,type,note):
+
+    client_detail= get_client_by_id(client_id)
+
+    if client_detail is None:
+        raise ValueError("client not found")
        
+    status=client_detail[4]
+
+    valid_interaction={"call","email","meeting"}
+
+    if type not in valid_interaction:
+        raise ValueError("Invalid interaction type")
+    
+    try:
+        interaction(client_id,type,note)
+    except sqlite3.IntegrityError:
+        raise ValueError("Check Contraints Failed")
+
+def update_client_status(client_id, new_status):
+
+    client_detail=get_client_by_id(client_id)
+
+    if client_detail is None:
+        raise ValueError("client not Exists")
+    
+    current_status=client_detail[4]
+
+    valid_transition={
+        "lead":["contacted","converted"],
+        "contacted":["converted","lost"],
+        "converted":[],
+        "lost":[],
+    }
+    if new_status not in valid_transition(current_status):
+        raise ValueError("Invalid status transition")
+    
 
