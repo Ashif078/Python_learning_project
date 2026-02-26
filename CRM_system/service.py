@@ -3,7 +3,8 @@ from database import(
     add_client,
     get_client_by_id, 
     interaction,
-    update_client
+    update_client,
+    view_records_by_status
 
 
 )
@@ -75,5 +76,21 @@ def update_client_status(client_id, new_status):
         "update_status" :update_status
     }
 
+def view_records(status):
+
+    valid_interaction={"call","email","meeting"}
+
+    status=status.strip().lower()
+
+    if status not in valid_interaction:
+        raise ValueError("Invalid Status Type")
+    
+    try:
+        records=view_records_by_status(status)
+    except sqlite3.IntegrityError:
+        raise ValueError("Check Status Failed")
+
+
+    return records    
     
 
