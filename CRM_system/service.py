@@ -1,96 +1,100 @@
 import sqlite3
-from database import(
+
+from database import (
+    create_table,
     add_client,
-    get_client_by_id, 
+    get_client_by_id,
     interaction,
     update_client,
     view_records_by_status
-
-
 )
-def create_client(name,phone,email):
-     
-    if name.strip()==" ":
-        raise ValueError("name should not be empty")
-    if phone==" ":
-        raise ValueError("phone no should not be empty")
-    if email==" ":
-        raise ValueError("email should not be empty")
-     
-    try:
-        add_client(name,phone,email)
-    except sqlite3.IntegrityError:
-        raise ValueError("client already exists")
+
+
+def create_client(name, phone, email):
+
+    if name.strip() == "":
+        raise ValueError("Name should not be empty")
     
-def add_interaction(client_id,type,note):
-
-    client_detail= get_client_by_id(client_id)
-
-    if client_detail is None:
-        raise ValueError("client not found")
-       
-    status=client_detail[4]
-
-    if status !="lead":
-        raise ValueError("status is not applicable")
-
-    valid_interaction={"call","email","meeting"}
-
-    if type not in valid_interaction:
-        raise ValueError("Invalid interaction type")
+    if phone == "":
+        raise ValueError("Phone number should not be empty")
+    
+    if email == "":
+        raise ValueError("Email should not be empty")
     
     try:
-        interaction(client_id,type,note)
+        add_client(name, phone, email)
     except sqlite3.IntegrityError:
-        raise ValueError("Check Contraints Failed")
+        raise ValueError("Client already exists")
 
+def add_interaction(client_id, interaction_type, note):
+
+    client_details = get_client_by_id(client_id)
+
+    if client_details is None:
+        raise ValueError("Client not Exists")
+    
+    status = client_details[4]
+
+    valid_interaction = {"call", "email", "meeting"}
+
+    if interaction_type not in valid_interaction:
+        raise ValueError("Invalid Interaction type")
+    
+    try:
+        interaction(client_id, type, note)
+
+        if status == "lead":
+            update_client_status(client_id, interaction_type)
+        
+    except sqlite3.IntegrityError:
+        raise ValueError("Check Constraints Failed")
+    
 def update_client_status(client_id, new_status):
 
-    client_detail=get_client_by_id(client_id)
+    client_details = get_client_by_id(client_id)
 
-    if client_detail is None:
-        raise ValueError("client not Exists")
+    if client_details is None:
+        raise ValueError("Client not Exists")
     
-    current_status=client_detail[4]
+    current_status = client_details[4]
+    new_status = new_status.strip().lower()
 
-    valid_transition={
-        "lead":["contacted","converted"],
-        "contacted":["converted","lost"],
-        "converted":[],
-        "lost":[],
+    valid_transitions = {
+        "lead" : ["contacted", "lost"],
+        "contacted" : ["converted", "lost"],
+        "converted" : [],
+        "lost" : []
     }
-    if new_status not in valid_transition(current_status):
-        raise ValueError("Invalid status transition")
 
-    try:
-        update_client(client_id,new_status)
-    except sqlite3.IntegrityError:
-        raise ValueError("client not Exists")
+    if new_status not in valid_transitions[current_status]:
+        raise ValueError("Invalid status transitions")
     
-    updated_info=get_client_by_id(client_id)
+    try:
+        update_client(client_id, new_status)
+    except sqlite3.IntegrityError:
+        raise ValueError ("Check Constraints Fail")
+    
+    Updated_info = get_client_by_id(client_id)
 
-    update_status=updated_info[4]
+    update_status = Updated_info[4]
 
-    return{
+    return {
         "client_id" : client_id,
-        "update_status" :update_status
+        "Update_status" : update_status
     }
 
 def view_records(status):
 
-    valid_interaction={"call","email","meeting"}
+    valid_interaction = {"lead", "contacted", "converted", "lost"}
 
-    status=status.strip().lower()
+    status = status.strip().lower()
 
     if status not in valid_interaction:
-        raise ValueError("Invalid Status Type")
+        raise ValueError("Invalid Status type")
     
     try:
-        records=view_records_by_status(status)
+        records = view_records_by_status(status)
     except sqlite3.IntegrityError:
-        raise ValueError("Check Status Failed")
+        raise ValueError ("Check Status Failed")
 
-
-    return records    
-    
-
+    return records
