@@ -9,6 +9,12 @@ from service import (
     view_records
 )
 
+from analytics import (
+    get_status_summary,
+    get_active_client,
+    get_conversion_rate
+)
+
 def main():
 
     create_table()
@@ -21,7 +27,8 @@ def main():
     2️⃣. Add interaction
     3️⃣. Update Status
     4️⃣. View Records By Status
-    5️⃣. Exit
+    5️⃣. Dashboard
+    6️⃣. Exit          
     """)
         
         choice  = input("Choose from menu : ")
@@ -82,8 +89,31 @@ def main():
             except ValueError as e:
                 print(f"Error : {e}")
 
-
         elif choice == "5":
+            
+            summary = get_status_summary()
+
+            conversion_rate = get_conversion_rate()
+
+            active_client= get_active_client()
+
+            print("-------------Statys Summary----------")
+            print(f"lead : {summary ['Lead']}")
+            print(f"converted: {summary['converted']}")
+            print(f"contacted: { summary['contacted']}")
+            print(f"Lost : {summary['lost']}")
+
+            print(f"\n The conversion rate of client : {conversion_rate}\n")
+
+
+            print("--------------Active client Details---------------")
+            print(f"client ID :{ active_client['client_id ']}")
+            print(f"client Name :{ active_client['client_name ']}")
+            print(f"Interaction count :{ active_client['Interaction count ']}")
+
+
+
+        elif choice == "6":
             print("Good-Bye.....")
             break
 

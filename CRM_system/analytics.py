@@ -13,14 +13,16 @@ def get_status_summary():
 
     summary= get_client_status_counts()
 
-    if summary is not None:
+    if summary is  None:
         return get_status_summary
     
-    status_summary["lead"] = summary[0][1]
-    status_summary["contacted"] = summary[1][1]
-    status_summary["converted"] = summary[2][1]
-    status_summary["lost"] = summary[3][1]
-    return status_summary
+    for status , count in summary:
+        status_summary[status]= count
+
+    return status_summary    
+
+
+    
 def get_conversion_rate():
     
     
@@ -30,7 +32,7 @@ def get_conversion_rate():
     if total == 0:
         return 0.0
 
-    converted = summary[2][1]
+    converted = summary['converted']
     return(converted/total)*100
 
 def get_active_client():
